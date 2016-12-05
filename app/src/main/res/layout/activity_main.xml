@@ -6,16 +6,21 @@
     android:orientation="vertical">
 
     <EditText
+        android:hint="action"
+        android:text="android.intent.action."
         android:id="@+id/action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <EditText
+        android:hint="category"
         android:id="@+id/category"
+        android:text="android.intent.category.DEFAULT"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <EditText
+        android:hint="data"
         android:id="@+id/data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -26,17 +31,11 @@
         android:layout_height="wrap_content"
         android:text="launch"/>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <TextView
-            android:textIsSelectable="true"
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"/>
-    </ScrollView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>
 

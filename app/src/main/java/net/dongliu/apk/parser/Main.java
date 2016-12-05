@@ -11,10 +11,10 @@ import java.util.Locale;
  */
 public class Main {
     public static void main(String[] args) throws IOException, CertificateException {
-        String apkFile = args[0];
-        try (ApkParser parser = new ApkParser(apkFile)) {
-            parser.setPreferredLocale(Locale.getDefault());
-            System.out.println(parser.getManifestXml());
-        }
+//        String apkFile = args[0];
+//        try (ApkParser parser = new ApkParser(apkFile)) {
+//            parser.setPreferredLocale(Locale.getDefault());
+//            System.out.println(parser.getManifestXml());
+//        }
     }
 }

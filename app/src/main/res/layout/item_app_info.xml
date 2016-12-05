@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="88dp"
+                android:orientation="vertical">
+
+    <TextView
+        android:textColor="#000"
+        android:id="@+id/tv_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:ellipsize="end"
+        android:maxLines="5"
+        android:textIsSelectable="true"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:background="#e1e1e1"/>
+</RelativeLayout>
