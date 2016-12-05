@@ -1,28 +1,62 @@
 package xyz.hanks.launchactivity;
 
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageStats;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
+import android.widget.EditText;
+import android.widget.TextView;
 
-import com.jaredrummler.apkparser.ApkParser;
-import com.jaredrummler.apkparser.model.AndroidComponent;
-import com.jaredrummler.apkparser.model.AndroidManifest;
-import com.jaredrummler.apkparser.model.IntentFilter;
+import net.dongliu.apk.parser.ApkParser;
 
 import java.io.File;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+
 public class MainActivity extends AppCompatActivity {
+    //@BindView(R.id.text) TextView textView;
+    @BindView(R.id.action) EditText etAction;
+    @BindView(R.id.category) EditText etCategory;
+    @BindView(R.id.data) EditText etData;
+
+
+    @OnClick(R.id.btn_launch)
+    public void launch() {
+        Intent intent = new Intent();
+        String actions = etAction.getText().toString();
+        String catagories = etCategory.getText().toString();
+        String datas = etData.getText().toString();
+
+
+        if (!TextUtils.isEmpty(actions)) {
+            intent.setAction(actions);
+        }
+        if (!TextUtils.isEmpty(catagories)) {
+            for (String line : catagories.split("#")) {
+                intent.addCategory(line);
+            }
+        }
+        if (!TextUtils.isEmpty(datas)) {
+            intent.setData(Uri.parse(datas));
+        }
+
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TextView textView = (TextView) findViewById(R.id.text);
         PackageManager pm = getPackageManager();
         List<PackageInfo> packageInfos = pm.getInstalledPackages(0);
         for (PackageInfo packageInfo : packageInfos) {
@@ -43,38 +77,55 @@ public class MainActivity extends AppCompatActivity {
                 appInfo.setDataSize(stats.dataSize);
                 System.out.println(appInfo);
 
+
+                StringBuilder sb = new StringBuilder();
                 System.out.println("----------------------------");
+                sb.append("----------------------------------------------\n");
                 try {
-                    ApkParser parser = ApkParser.create(pm, "com.android.settings");
-                    AndroidManifest androidManifest = parser.getAndroidManifest();
-                    for (AndroidComponent component : androidManifest.getComponents()) {
-                        boolean exported = component.exported;
-                        if (!exported){
-                            continue;
-                        }
-                        System.out.println("============= component ===================");
-                        List<IntentFilter> intentFilters = component.intentFilters;
-                        String name = component.name;
-                        String process = component.process;
-                        int type = component.type;
-                        System.out.println("name = " + name);
-                        System.out.println("type = " + type);
-                        System.out.println("process = " + process);
-                        for (IntentFilter intentFilter : intentFilters) {
-                            List<String> actions = intentFilter.actions;
-                            List<String> categories = intentFilter.categories;
-                            List<IntentFilter.IntentData> dataList = intentFilter.dataList;
-                            for (String action : actions) {
-                                System.out.println("action = " + action);
-                            }
-                            for (String category : categories) {
-                                System.out.println("category = " + category);
-                            }
-                            for (IntentFilter.IntentData intentData : dataList) {
-                                System.out.println("intentData = " + intentData.toString());
-                            }
-                        }
-                    }
+                    //ApkParser parser = ApkParser.create(pm, "com.android.settings");
+                    ApkParser parser = new ApkParser(apkfile);
+                    String manifestXml = parser.getManifestXml();
+                    sb.append(manifestXml).append("\n");
+                    textView.append(sb.toString());
+
+//                    for (AndroidComponent component : androidManifest.getComponents()) {
+//                        boolean exported = component.exported;
+//                        if (!exported) {
+//                            continue;
+//                        }
+//                        sb.append("============= component ===================\n");
+//                        System.out.println("============= component ===================");
+//                        List<IntentFilter> intentFilters = component.intentFilters;
+//                        String name = component.name;
+//                        String process = component.process;
+//                        int type = component.type;
+//
+//                        System.out.println("name = " + name);
+//                        System.out.println("type = " + type);
+//                        System.out.println("process = " + process);
+//                        sb.append("name = " + name + "\n");
+//                        sb.append("type = " + type + "\n");
+//                        sb.append("process = " + process + "\n");
+//                        for (IntentFilter intentFilter : intentFilters) {
+//                            List<String> actions = intentFilter.actions;
+//                            List<String> categories = intentFilter.categories;
+//                            List<IntentFilter.IntentData> dataList = intentFilter.dataList;
+//                            for (String action : actions) {
+//                                System.out.println("action = " + action);
+//                                sb.append("action = " + action + "\n");
+//                            }
+//                            for (String category : categories) {
+//                                System.out.println("category = " + category);
+//                                sb.append("category = " + category + "\n");
+//                            }
+//                            for (IntentFilter.IntentData intentData : dataList) {
+//                                System.out.println("intentData = " + intentData.toString());
+//                                sb.append("intentData = " + intentData.toString() + "\n");
+//                            }
+//                        }
+//                        textView.append(sb.toString());
+//                    }
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -90,23 +141,6 @@ public class MainActivity extends AppCompatActivity {
      * APK文件
      */
     public class AppEntity {
-
-        @Override
-        public String toString() {
-            return "AppEntity{" +
-                    "path='" + path + '\'' +
-                    ", packageName='" + packageName + '\'' +
-                    ", versionName='" + versionName + '\'' +
-                    ", versionCode=" + versionCode +
-                    ", uid=" + uid +
-                    ", cacheSize=" + cacheSize +
-                    ", dataSize=" + dataSize +
-                    ", icon=" + icon +
-                    ", checked=" + checked +
-                    ", visible=" + visible +
-                    ", appName='" + appName + '\'' +
-                    '}';
-        }
 
         private final String path;
         /**
@@ -140,6 +174,26 @@ public class MainActivity extends AppCompatActivity {
         private boolean checked;
         private boolean visible;
         private String appName;
+        public AppEntity(String path) {
+            this.path = path;
+        }
+
+        @Override
+        public String toString() {
+            return "AppEntity{" +
+                    "path='" + path + '\'' +
+                    ", packageName='" + packageName + '\'' +
+                    ", versionName='" + versionName + '\'' +
+                    ", versionCode=" + versionCode +
+                    ", uid=" + uid +
+                    ", cacheSize=" + cacheSize +
+                    ", dataSize=" + dataSize +
+                    ", icon=" + icon +
+                    ", checked=" + checked +
+                    ", visible=" + visible +
+                    ", appName='" + appName + '\'' +
+                    '}';
+        }
 
         public String getAppName() {
             return appName;
@@ -147,10 +201,6 @@ public class MainActivity extends AppCompatActivity {
 
         public void setAppName(String appName) {
             this.appName = appName;
-        }
-
-        public AppEntity(String path) {
-            this.path = path;
         }
 
         public String getPackageName() {
