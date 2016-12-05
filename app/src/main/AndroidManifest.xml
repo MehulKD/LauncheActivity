@@ -16,6 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".DetailActivity"/>
+        <activity android:name=".AppIntentActivity"/>
+        <activity android:name=".XmlSourceViewerActivity"/>
     </application>
 
 </manifest>

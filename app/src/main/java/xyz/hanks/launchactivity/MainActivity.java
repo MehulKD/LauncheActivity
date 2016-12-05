@@ -5,7 +5,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageStats;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -20,9 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.dongliu.apk.parser.ApkParser;
-import net.dongliu.apk.parser.model.AndroidComponent;
-import net.dongliu.apk.parser.model.AndroidManifest;
-import net.dongliu.apk.parser.model.IntentFilter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -31,15 +27,17 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import xyz.hanks.launchactivity.model.ApkInfo;
 
 public class MainActivity extends AppCompatActivity {
-    //@BindView(R.id.text) TextView tvInfo;
+
     @BindView(R.id.action) EditText etAction;
     @BindView(R.id.category) EditText etCategory;
     @BindView(R.id.data) EditText etData;
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
+
     private AppInfoAdapter adapter;
-    private List<String> data = new ArrayList<>();
+    private List<ApkInfo> data = new ArrayList<>();
 
     @OnClick(R.id.btn_launch)
     public void launch() {
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                         // 非系统应用
                         File apkfile = new File(app.sourceDir);
                         PackageStats stats = new PackageStats(packageInfo.packageName);
-                        AppEntity appInfo = new AppEntity(app.sourceDir);
+                        ApkInfo appInfo = new ApkInfo(app.sourceDir);
                         appInfo.setPackageName(packageInfo.packageName);
                         appInfo.setVersionCode(packageInfo.versionCode);
                         appInfo.setVersionName(packageInfo.versionName);
@@ -112,23 +110,21 @@ public class MainActivity extends AppCompatActivity {
                         appInfo.setAppName(app.loadLabel(pm).toString());
                         appInfo.setCacheSize(stats.cacheSize);
                         appInfo.setDataSize(stats.dataSize);
-                        System.out.println(appInfo);
-                        System.out.println("----------------------------");
-                        sb.append("======"+ appInfo.appName + "=======\n");
-
                         try {
-                            //ApkParser parser = ApkParser.create(pm, "com.android.settings");
                             ApkParser parser = new ApkParser(apkfile);
                             String manifestXml = parser.getManifestXml();
+                            appInfo.setManifest(manifestXml);
+                            data.add(appInfo);
+                            /*
                             try {
                                 AndroidManifest androidManifest = new AndroidManifest(parser.getApkMeta(), manifestXml);
                                 for (AndroidComponent component : androidManifest.getComponents()) {
                                     boolean exported = component.exported;
                                     if (!exported) {
-                                       // continue;
+                                        // continue;
                                     }
                                     List<IntentFilter> intentFilters = component.intentFilters;
-                                    if (intentFilters==null || intentFilters.size()==0) {
+                                    if (intentFilters == null || intentFilters.size() == 0) {
                                         continue;
                                     }
                                     System.out.println("============= component ===================");
@@ -167,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             sb.append("\n");
-                            data.add(sb.toString());
+                            */
+
                         } catch (Exception e) {
 
                         }
@@ -184,145 +181,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * APK文件
-     */
-    public class AppEntity {
-
-        private final String path;
-        /**
-         * APK包名
-         */
-        private String packageName;
-        /**
-         * APK版本
-         */
-        private String versionName;
-        /**
-         * APK版本号
-         */
-        private int versionCode;
-        /**
-         * APK uid
-         */
-        private int uid;
-        /**
-         * 缓存数据大小
-         */
-        private long cacheSize;
-        /**
-         * 应用数据大小
-         */
-        private long dataSize;
-        /**
-         * 图标
-         */
-        private Drawable icon;
-        private boolean checked;
-        private boolean visible;
-        private String appName;
-
-        public AppEntity(String path) {
-            this.path = path;
-        }
-
-        @Override
-        public String toString() {
-            return "AppEntity{" +
-                    "path='" + path + '\'' +
-                    ", packageName='" + packageName + '\'' +
-                    ", versionName='" + versionName + '\'' +
-                    ", versionCode=" + versionCode +
-                    ", uid=" + uid +
-                    ", cacheSize=" + cacheSize +
-                    ", dataSize=" + dataSize +
-                    ", icon=" + icon +
-                    ", checked=" + checked +
-                    ", visible=" + visible +
-                    ", appName='" + appName + '\'' +
-                    '}';
-        }
-
-        public String getAppName() {
-            return appName;
-        }
-
-        public void setAppName(String appName) {
-            this.appName = appName;
-        }
-
-        public String getPackageName() {
-            return packageName;
-        }
-
-        public void setPackageName(String packageName) {
-            this.packageName = packageName;
-        }
-
-        public String getVersionName() {
-            return versionName;
-        }
-
-        public void setVersionName(String versionName) {
-            this.versionName = versionName;
-        }
-
-        public int getVersionCode() {
-            return versionCode;
-        }
-
-        public void setVersionCode(int versionCode) {
-            this.versionCode = versionCode;
-        }
-
-        public int getUid() {
-            return uid;
-        }
-
-        public void setUid(int uid) {
-            this.uid = uid;
-        }
-
-        public long getCacheSize() {
-            return cacheSize;
-        }
-
-        public void setCacheSize(long cacheSize) {
-            this.cacheSize = cacheSize;
-        }
-
-        public long getDataSize() {
-            return dataSize;
-        }
-
-        public void setDataSize(long dataSize) {
-            this.dataSize = dataSize;
-        }
-
-        public Drawable getIcon() {
-            return icon;
-        }
-
-        public void setIcon(Drawable icon) {
-            this.icon = icon;
-        }
-
-        public boolean isChecked() {
-            return checked;
-        }
-
-        public void setChecked(boolean checked) {
-            this.checked = checked;
-        }
-
-        public boolean isVisible() {
-            return visible;
-        }
-
-        public void setVisible(boolean visible) {
-            this.visible = visible;
-        }
-    }
 
     private class AppInfoAdapter extends RecyclerView.Adapter<AppInfoHolder> {
         @Override
@@ -333,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(AppInfoHolder holder, int position) {
-            holder.tvInfo.setText(data.get(position));
+            holder.tvInfo.setText(data.get(position).getAppName());
         }
 
         @Override
@@ -352,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
             tvInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                     DetailActivity.start(MainActivity.this,data.get(getAdapterPosition()));
+                    XmlSourceViewerActivity.start(MainActivity.this, data.get(getAdapterPosition()).getPath());
                 }
             });
         }
