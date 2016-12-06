@@ -115,55 +115,7 @@ public class MainActivity extends AppCompatActivity {
                             String manifestXml = parser.getManifestXml();
                             appInfo.setManifest(manifestXml);
                             data.add(appInfo);
-                            /*
-                            try {
-                                AndroidManifest androidManifest = new AndroidManifest(parser.getApkMeta(), manifestXml);
-                                for (AndroidComponent component : androidManifest.getComponents()) {
-                                    boolean exported = component.exported;
-                                    if (!exported) {
-                                        // continue;
-                                    }
-                                    List<IntentFilter> intentFilters = component.intentFilters;
-                                    if (intentFilters == null || intentFilters.size() == 0) {
-                                        continue;
-                                    }
-                                    System.out.println("============= component ===================");
-                                    String name = component.name;
-                                    String process = component.process;
-                                    int type = component.type;
-                                    System.out.println("exported = " + exported);
-                                    System.out.println("name = " + name);
-                                    System.out.println("type = " + type);
-                                    System.out.println("process = " + process);
-                                    sb.append("name = " + name).append("\n");
-                                    sb.append("type = " + type).append("\n");
-                                    sb.append("process = " + process).append("\n");
-                                    sb.append("exported = " + exported).append("\n");
 
-                                    for (IntentFilter intentFilter : intentFilters) {
-                                        sb.append("-----intentFilter------").append("\n");
-                                        List<String> actions = intentFilter.actions;
-                                        List<String> categories = intentFilter.categories;
-                                        List<IntentFilter.IntentData> dataList = intentFilter.dataList;
-                                        for (String action : actions) {
-                                            System.out.println("action = " + action);
-                                            sb.append("action = " + action).append("\n");
-                                        }
-                                        for (String category : categories) {
-                                            System.out.println("category = " + category);
-                                            sb.append("category = " + category).append("\n");
-                                        }
-                                        for (IntentFilter.IntentData intentData : dataList) {
-                                            System.out.println("intentData = " + intentData.toString());
-                                            sb.append("intentData = " + intentData.toString()).append("\n");
-                                        }
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            sb.append("\n");
-                            */
 
                         } catch (Exception e) {
 
@@ -211,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     XmlSourceViewerActivity.start(MainActivity.this, data.get(getAdapterPosition()).getPath());
+                    DetailActivity.start(MainActivity.this, data.get(getAdapterPosition()).getPath());
                 }
             });
         }

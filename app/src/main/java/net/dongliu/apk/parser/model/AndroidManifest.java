@@ -29,7 +29,7 @@ public class AndroidManifest {
         AndroidComponent.Builder builder = AndroidComponent.newAndroidComponent(type);
         NamedNodeMap attributes = node.getAttributes();
         builder.name(XmlUtils.getAttribute(attributes, "android:name"));
-        builder.exported(XmlUtils.getBoolAttribute(attributes, "android:exported", false));
+        builder.exported(XmlUtils.getBoolAttribute(attributes, "android:exported", true));
         builder.process(XmlUtils.getAttribute(attributes, "android:process"));
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
@@ -39,6 +39,9 @@ public class AndroidManifest {
                 IntentFilter intentFilter = getIntentFilter(child);
                 builder.addIntentFilter(intentFilter);
             }
+        }
+        if (builder.getIntentFilters().size() <= 0) {
+            builder.exported(false);
         }
         return builder.build();
     }

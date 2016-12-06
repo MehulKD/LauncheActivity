@@ -59,6 +59,10 @@ public class AndroidComponent {
             return this;
         }
 
+        public List<IntentFilter> getIntentFilters() {
+            return intentFilters;
+        }
+
         public Builder addIntentFilter(IntentFilter intentFilter) {
             this.intentFilters.add(intentFilter);
             return this;
