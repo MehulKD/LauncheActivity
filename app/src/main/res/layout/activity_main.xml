@@ -5,37 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:hint="action"
-        android:text="android.intent.action."
-        android:id="@+id/action"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <EditText
-        android:hint="category"
-        android:id="@+id/category"
-        android:text="android.intent.category.DEFAULT"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <EditText
-        android:hint="data"
-        android:id="@+id/data"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <Button
-        android:id="@+id/btn_launch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="launch"/>
-
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:fadingEdgeLength="0dp"
+        android:overScrollMode="never"
+        android:padding="16dp"/>
 
 </LinearLayout>
 
