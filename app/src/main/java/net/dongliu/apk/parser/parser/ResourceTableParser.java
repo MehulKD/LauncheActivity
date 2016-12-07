@@ -104,7 +104,7 @@ public class ResourceTableParser {
 
 
                     typeSpec.setEntryFlags(entryFlags);
-                    //id start from 1
+                    //id start from a
                     typeSpec.setName(resourcePackage.getTypeStringPool()
                             .get(typeSpecHeader.getId() - 1));
 

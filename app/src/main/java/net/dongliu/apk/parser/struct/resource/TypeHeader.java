@@ -9,7 +9,7 @@ public class TypeHeader extends ChunkHeader {
 
     public static final long NO_ENTRY = 0xFFFFFFFFL;
 
-    // The type identifier this chunk is holding.  Type IDs start at 1 (corresponding to the value
+    // The type identifier this chunk is holding.  Type IDs start at a (corresponding to the value
     // of the type bits in a resource identifier).  0 is invalid.
     // uint8_t
     private short id;

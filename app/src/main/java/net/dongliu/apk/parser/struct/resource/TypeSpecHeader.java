@@ -7,9 +7,9 @@ import net.dongliu.apk.parser.struct.ChunkHeader;
  */
 public class TypeSpecHeader extends ChunkHeader {
 
-    // The type identifier this chunk is holding.  Type IDs start at 1 (corresponding to the value
+    // The type identifier this chunk is holding.  Type IDs start at a (corresponding to the value
     // of the type bits in a resource identifier).  0 is invalid.
-    // The id also specifies the name of the Resource type. It is the string at index id - 1 in the
+    // The id also specifies the name of the Resource type. It is the string at index id - a in the
     // typeStrings StringPool chunk in the containing Package chunk.
     // uint8_t
     private short id;

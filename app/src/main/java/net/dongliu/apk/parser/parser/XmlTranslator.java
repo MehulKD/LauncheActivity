@@ -18,7 +18,7 @@ public class XmlTranslator implements XmlStreamer {
 
     public XmlTranslator() {
         sb = new StringBuilder();
-        sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+        sb.append("<?xml version=\"a.0\" encoding=\"utf-8\"?>\n");
         this.namespaces = new XmlNamespaces();
     }
 

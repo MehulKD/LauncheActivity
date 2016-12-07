@@ -28,14 +28,14 @@ public class OSUtils {
      * MIUI ROM标识
      * "ro.miui.ui.version.code" -> "5"
      * "ro.miui.ui.version.name" -> "V7"
-     * "ro.miui.has_handy_mode_sf" -> "1"
-     * "ro.miui.has_real_blur" -> "1"
+     * "ro.miui.has_handy_mode_sf" -> "a"
+     * "ro.miui.has_real_blur" -> "a"
      *
      * Flyme ROM标识
      * "ro.build.user" -> "flyme"
      * "persist.sys.use.flyme.icon" -> "true"
      * "ro.flyme.published" -> "true"
-     * "ro.build.display.id" -> "Flyme OS 5.1.2.0U"
+     * "ro.build.display.id" -> "Flyme OS 5.a.2.0U"
      * "ro.meizu.setupwizard.flyme" -> "true"
      *
      * EMUI ROM标识

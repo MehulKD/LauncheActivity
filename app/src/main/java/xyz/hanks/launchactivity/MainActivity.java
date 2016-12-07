@@ -18,8 +18,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.dongliu.apk.parser.ApkParser;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
         getData();
     }
 
+    public void weixin(View view){
+
+    }
+
     private void getData() {
         new Thread() {
             @Override
@@ -110,16 +112,7 @@ public class MainActivity extends AppCompatActivity {
                         appInfo.setAppName(app.loadLabel(pm).toString());
                         appInfo.setCacheSize(stats.cacheSize);
                         appInfo.setDataSize(stats.dataSize);
-                        try {
-                            ApkParser parser = new ApkParser(apkfile);
-                            String manifestXml = parser.getManifestXml();
-                            appInfo.setManifest(manifestXml);
-                            data.add(appInfo);
-
-
-                        } catch (Exception e) {
-
-                        }
+                        data.add(appInfo);
                     }
                 }
                 runOnUiThread(new Runnable() {
@@ -162,8 +155,9 @@ public class MainActivity extends AppCompatActivity {
             tvInfo.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    XmlSourceViewerActivity.start(MainActivity.this, data.get(getAdapterPosition()).getPath());
-                    DetailActivity.start(MainActivity.this, data.get(getAdapterPosition()).getPath());
+                    ApkInfo apkInfo = data.get(getAdapterPosition());
+                    //XmlSourceViewerActivity.start(MainActivity.this, apkInfo.getPath());
+                    DetailActivity.start(MainActivity.this, apkInfo.getPath(),apkInfo.getPackageName() );
                 }
             });
         }

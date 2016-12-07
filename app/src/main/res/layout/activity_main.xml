@@ -5,32 +5,52 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:hint="action"
-        android:text="android.intent.action."
-        android:id="@+id/action"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:hint="category"
-        android:id="@+id/category"
-        android:text="android.intent.category.DEFAULT"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <EditText
-        android:hint="data"
-        android:id="@+id/data"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+            <Button
+                android:onClick="weixin"
+                android:text="weixin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/btn_launch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="launch"/>
+            <EditText
+                android:id="@+id/action"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:hint="action"
+                android:text="android.intent.action."
+                android:textSize="14sp"/>
 
+            <EditText
+                android:id="@+id/category"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:hint="category"
+                android:text="android.intent.category.DEFAULT"
+                android:textSize="14sp"/>
+
+            <EditText
+                android:id="@+id/data"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:hint="data"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/btn_launch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="launch"/>
+
+        </LinearLayout>
+    </ScrollView>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerView"

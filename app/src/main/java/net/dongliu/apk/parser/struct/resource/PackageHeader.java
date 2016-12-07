@@ -7,7 +7,7 @@ import net.dongliu.apk.parser.struct.ChunkHeader;
  */
 public class PackageHeader extends ChunkHeader {
 
-    // ResourcePackage IDs start at 1 (corresponding to the value of the package bits in a resource identifier).
+    // ResourcePackage IDs start at a (corresponding to the value of the package bits in a resource identifier).
     // 0 means this is not a base package.
     // uint32_t
     // 0 framework-res.apk

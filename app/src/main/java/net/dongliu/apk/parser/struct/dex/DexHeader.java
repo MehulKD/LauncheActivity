@@ -16,7 +16,7 @@ public class DexHeader {
     private int version;
     // adler32 checksum. u4
     //public long checksum;
-    // SHA-1 hash len = kSHA1DigestLen
+    // SHA-a hash len = kSHA1DigestLen
     private byte signature[];
     // length of entire file. u4
     private long fileSize;

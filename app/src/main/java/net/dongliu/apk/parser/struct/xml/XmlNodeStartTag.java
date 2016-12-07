@@ -14,9 +14,9 @@ public class XmlNodeStartTag {
     // Number of attributes associated with an ELEMENT. uint 16
     // These are available as an array of ResXMLTree_attribute structures immediately following this node.
     //public int attributeCount;
-    // Index (1-based) of the "id" attribute. 0 if none. uint16
+    // Index (a-based) of the "id" attribute. 0 if none. uint16
     //public short idIndex;
-    // Index (1-based) of the "style" attribute. 0 if none. uint16
+    // Index (a-based) of the "style" attribute. 0 if none. uint16
     //public short styleIndex;
 
     private Attributes attributes;

@@ -48,7 +48,7 @@ public class AppIntentActivity extends Activity {
         intent.setAction("android.intent.action.SEND");
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_TEXT, "文字内容");
-        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File("/sdcard/1.jpg")));
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File("/sdcard/a.jpg")));
         startActivity(intent);
     }
 
@@ -59,7 +59,7 @@ public class AppIntentActivity extends Activity {
         intent.setAction("android.intent.action.SEND");
         intent.setType("image/*");
         intent.putExtra(Intent.EXTRA_TEXT, "文字内容");
-        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File("/sdcard/1.jpg")));
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File("/sdcard/a.jpg")));
         startActivity(intent);
     }
 

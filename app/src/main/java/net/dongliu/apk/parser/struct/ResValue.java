@@ -71,7 +71,7 @@ public class ResValue {
         public static final short INT_DEC = 0x10;
         // The 'data' is a raw integer value of the form 0xn..n.
         public static final short INT_HEX = 0x11;
-        // The 'data' is either 0 or 1; for input "false" or "true" respectively.
+        // The 'data' is either 0 or a; for input "false" or "true" respectively.
         public static final short INT_BOOLEAN = 0x12;
 
         // Beginning of color integer flavors...
