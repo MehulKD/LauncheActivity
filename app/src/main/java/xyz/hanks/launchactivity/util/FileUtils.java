@@ -46,7 +46,7 @@ public class FileUtils {
                 bottomBitmap.getConfig());
         Canvas canvas = new Canvas(bitmap);
         canvas.drawBitmap(bottomBitmap, new Matrix(), null);
-        int topBitmapSize = ScreenUtils.dpToPx(10);
+        int topBitmapSize = ScreenUtils.dpToPx(18);
         canvas.drawBitmap(Bitmap.createScaledBitmap(topBitmap, topBitmapSize, topBitmapSize, false),
                 bottomBitmap.getWidth() - topBitmapSize, bottomBitmap.getHeight() - topBitmapSize, null);
         return bitmap;
