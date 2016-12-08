@@ -7,7 +7,6 @@
     <string name="setting">设置</string>
     <string name="source">源码</string>
     <string name="manifest">AndroidManifest.xml</string>
-    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
 
@@ -80,4 +79,8 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="base_setting">基础设置</string>
+    <string name="about">关于</string>
+    <string name="support">支持</string>
+    <string name="tip_update">更新</string>
 </resources>

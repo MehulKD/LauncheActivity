@@ -28,7 +28,7 @@
         <activity android:name=".XmlSourceViewerActivity"/>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
+            android:label="@string/setting">
         </activity>
     </application>
 
