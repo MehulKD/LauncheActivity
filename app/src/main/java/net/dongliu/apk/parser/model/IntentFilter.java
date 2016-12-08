@@ -35,8 +35,9 @@ public class IntentFilter {
             this.type = type;
         }
 
-        @Override public String toString() {
-            return "IntentData{" +
+        @Override
+        public String toString() {
+            return "{" +
                     "scheme='" + scheme + '\'' +
                     ", host='" + host + '\'' +
                     ", port='" + port + '\'' +

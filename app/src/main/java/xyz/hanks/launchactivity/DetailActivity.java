@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,9 +66,11 @@ public class DetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
-
         apkInfo = getIntent().getParcelableExtra(EXTRA_APPLICATION);
-
+        if (mToolbar != null) {
+            getSupportActionBar().setTitle(apkInfo.loadLabel(getPackageManager()));
+            mToolbar.setSubtitle(apkInfo.packageName);
+        }
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new IntentInfoAdapter();
         recyclerView.setAdapter(adapter);
@@ -199,21 +202,21 @@ public class DetailActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(IntentInfoHolder holder, int position) {
             IntentInfo intentInfo = data.get(position);
+            holder.tvActivityName.setText(intentInfo.className);
             StringBuilder sb = new StringBuilder();
-            sb.append(intentInfo.packageName).append("\n").append(intentInfo.className).append("\n");
-            sb.append("actions:\n");
+            sb.append("<b><font color=#FF4081>Action</font></b></div><br/>");
             for (String s : intentInfo.action) {
-                sb.append(s).append("\n");
+                sb.append("&emsp;").append(s).append("\n");
             }
-            sb.append("category:\n");
+            sb.append("<br/><b><font color=#FF4081>Category</font></b><br/>");
             for (String s : intentInfo.category) {
-                sb.append(s).append("\n");
+                sb.append("&emsp;").append(s).append("\n");
             }
-            sb.append("data:\n");
+            sb.append("<br/><b><font color=#FF4081>Data</font></b><br/>");
             for (IntentFilter.IntentData s : intentInfo.data) {
-                sb.append(s.toString()).append("\n");
+                sb.append("&emsp;").append(s.toString()).append("\n");
             }
-            holder.tvInfo.setText(sb.toString());
+            holder.tvInfo.setText(Html.fromHtml(sb.toString()));
         }
 
         @Override
@@ -225,11 +228,13 @@ public class DetailActivity extends BaseActivity {
     private class IntentInfoHolder extends RecyclerView.ViewHolder {
 
         private final TextView tvInfo;
+        private final TextView tvActivityName;
         private final Button btnShortcut;
         private final Button btnPreview;
 
         public IntentInfoHolder(View itemView) {
             super(itemView);
+            tvActivityName = (TextView) itemView.findViewById(R.id.tv_activity_name);
             tvInfo = (TextView) itemView.findViewById(R.id.tv_info);
             btnPreview = (Button) itemView.findViewById(R.id.btn_preview);
             btnShortcut = (Button) itemView.findViewById(R.id.btn_shortcut);
