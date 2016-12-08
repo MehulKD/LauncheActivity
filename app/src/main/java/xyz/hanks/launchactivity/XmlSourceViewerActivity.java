@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
 import android.webkit.WebResourceResponse;
@@ -27,7 +26,7 @@ import xyz.hanks.launchactivity.util.ToastUtils;
 /**
  * Simple example that parses the AndroidManifest.xml and displays the source in a WebView
  */
-public class XmlSourceViewerActivity extends AppCompatActivity {
+public class XmlSourceViewerActivity extends BaseActivity {
 
     public static final String APK_PATH = "apk_path";
     private final WebViewClient webViewClient = new WebViewClient() {

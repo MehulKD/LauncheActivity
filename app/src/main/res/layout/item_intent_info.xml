@@ -9,9 +9,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:textSize="12sp"
         android:textColor="#000"
-        android:textIsSelectable="true"/>
+        android:textIsSelectable="true"
+        android:textSize="12sp"/>
+
+
+    <Button
+        android:id="@+id/btn_shortcut"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="90dp"
+        android:elevation="2dp"
+        android:fontFamily="14pt"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="添加快捷"
+        android:textSize="12sp">
+    </Button>
+
+
+    <Button
+        android:id="@+id/btn_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_alignParentRight="true"
+        android:elevation="2dp"
+        android:fontFamily="14pt"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="预览"
+        android:textSize="12sp">
+    </Button>
 
     <View
         android:layout_width="match_parent"

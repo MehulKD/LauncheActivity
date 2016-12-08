@@ -1,10 +1,12 @@
 package xyz.hanks.launchactivity.util;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -24,6 +26,59 @@ import java.io.OutputStream;
  * Created by hanks on 16/6/28.
  */
 public class FileUtils {
+
+    public static Bitmap drawableToBitmap(Drawable drawable, Bitmap.Config... configArr) {
+        if (drawable == null || drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            return null;
+        }
+        if (drawable instanceof BitmapDrawable) {
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            if (!(bitmap == null || bitmap.isRecycled())) {
+                return bitmap;
+            }
+        }
+        return decodeBitmapFromDrawable(drawable, configArr);
+    }
+
+
+    public static Bitmap mergeBitmap(Bitmap bottomBitmap, Bitmap topBitmap) {
+        Bitmap bitmap = Bitmap.createBitmap(bottomBitmap.getWidth(), bottomBitmap.getHeight(),
+                bottomBitmap.getConfig());
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawBitmap(bottomBitmap, new Matrix(), null);
+        int topBitmapSize = ScreenUtils.dpToPx(10);
+        canvas.drawBitmap(Bitmap.createScaledBitmap(topBitmap, topBitmapSize, topBitmapSize, false),
+                bottomBitmap.getWidth() - topBitmapSize, bottomBitmap.getHeight() - topBitmapSize, null);
+        return bitmap;
+    }
+
+    public static Bitmap decodeBitmapFromDrawable(Drawable drawable, Bitmap.Config... configArr) {
+        if (drawable == null || drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            return null;
+        }
+        Bitmap.Config config = (configArr == null || configArr.length <= 0) ? drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565 : configArr[0];
+        Bitmap creatBitmapSafty = creatBitmapSafty(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), config);
+        if (creatBitmapSafty == null) {
+            return null;
+        }
+        Canvas canvas = new Canvas(creatBitmapSafty);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return creatBitmapSafty;
+    }
+
+    public static Bitmap creatBitmapSafty(int i, int i2, Bitmap.Config config) {
+        Bitmap bitmap = null;
+        try {
+            return Bitmap.createBitmap(i, i2, config);
+        } catch (Throwable th) {
+            if (config == Bitmap.Config.ARGB_8888) {
+                return creatBitmapSafty(i, i2, Bitmap.Config.RGB_565);
+            }
+            return bitmap;
+        }
+    }
+
 
     public static String saveImage(String imagePath) {
         File file = new File(imagePath);

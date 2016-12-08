@@ -1,17 +1,24 @@
 package xyz.hanks.launchactivity;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.dongliu.apk.parser.ApkParser;
@@ -25,38 +32,37 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import xyz.hanks.launchactivity.util.FileUtils;
+import xyz.hanks.launchactivity.util.ShortcutUtils;
 import xyz.hanks.launchactivity.util.ToastUtils;
 
+import static xyz.hanks.launchactivity.util.FileUtils.drawableToBitmap;
+
 /**
+ * 列出隐式意图
  * Created by hanks on 2016/12/5.
  */
 
-public class DetailActivity extends Activity {
+public class DetailActivity extends BaseActivity {
 
     public static final String APK_PATH = "apk_path";
     public static final String PACKAGE_NAME = "package_name";
+    public static final String EXTRA_APPLICATION = "extra_application";
 
-    @BindView(R.id.tv_detail) TextView tvDetail;
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
 
     private String apkPath;
     private String packageName;
     private IntentInfoAdapter adapter;
-
-    public static void start(Context context, String apkPath, String packageName) {
-        Intent starter = new Intent(context, DetailActivity.class);
-        starter.putExtra(APK_PATH, apkPath);
-        starter.putExtra(PACKAGE_NAME, packageName);
-        context.startActivity(starter);
-    }
     private List<IntentInfo> data = new ArrayList<>();
+    private ApplicationInfo apkInfo;
 
-    class IntentInfo{
-        String packageName;
-        String className;
-        List<String> action;
-        List<String> category;
-        List<IntentFilter.IntentData> data;
+    public static void start(Context context, ApplicationInfo applicationInfo) {
+        Intent starter = new Intent(context, DetailActivity.class);
+//        starter.putExtra(APK_PATH, apkPath);
+//        starter.putExtra(PACKAGE_NAME, packageName);
+        starter.putExtra(EXTRA_APPLICATION, applicationInfo);
+        context.startActivity(starter);
     }
 
     @Override
@@ -65,9 +71,9 @@ public class DetailActivity extends Activity {
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
-
-        apkPath = getIntent().getStringExtra(APK_PATH);
-        packageName = getIntent().getStringExtra(PACKAGE_NAME);
+        apkInfo = getIntent().getParcelableExtra(EXTRA_APPLICATION);
+        apkPath = apkInfo.sourceDir;
+        packageName = apkInfo.packageName;
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new IntentInfoAdapter();
@@ -76,14 +82,13 @@ public class DetailActivity extends Activity {
         try {
             ApkParser parser = new ApkParser(new File(apkPath));
             AndroidManifest androidManifest = new AndroidManifest(parser.getApkMeta(), parser.getManifestXml());
-            StringBuilder sb = new StringBuilder();
             for (AndroidComponent component : androidManifest.getComponents()) {
                 boolean exported = component.exported;
                 if (!exported) {
-                     continue;
+                    continue;
                 }
 
-                if (component.type != AndroidComponent.TYPE_ACTIVITY){
+                if (component.type != AndroidComponent.TYPE_ACTIVITY) {
                     continue;
                 }
 
@@ -91,23 +96,11 @@ public class DetailActivity extends Activity {
                 if (intentFilters == null || intentFilters.size() == 0) {
                     continue;
                 }
-                System.out.println(String.format("============= component: %s ===================",component.name));
                 String name = component.name;
-                if (name.startsWith(".")){
+                if (name.startsWith(".")) {
                     name = packageName + name;
                 }
-                String process = component.process;
-                int type = component.type;
-                System.out.println("exported = " + exported);
-                System.out.println("name = " + name);
-                System.out.println("type = " + type);
-                System.out.println("process = " + process);
-                sb.append("name = " + name).append("\n");
-                sb.append("type = " + type).append("\n");
-                sb.append("process = " + process).append("\n");
-                sb.append("exported = " + exported).append("\n");
                 for (IntentFilter intentFilter : intentFilters) {
-                    sb.append("-----intentFilter------").append("\n");
                     List<String> actions = intentFilter.actions;
                     List<String> categories = intentFilter.categories;
                     List<IntentFilter.IntentData> dataList = intentFilter.dataList;
@@ -119,35 +112,71 @@ public class DetailActivity extends Activity {
                     intentInfo.category = categories;
                     intentInfo.data = dataList;
                     data.add(intentInfo);
-
-                    for (String action : actions) {
-                        System.out.println("action = " + action);
-                        sb.append("action = " + action).append("\n");
-                    }
-                    for (String category : categories) {
-                        System.out.println("category = " + category);
-                        sb.append("category = " + category).append("\n");
-                    }
-                    for (IntentFilter.IntentData intentData : dataList) {
-                        System.out.println("intentData = " + intentData.toString());
-                        sb.append("intentData = " + intentData.toString()).append("\n");
-                    }
-
-
-
                 }
             }
-            tvDetail.setText(sb.toString());
             adapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    @NonNull
+    private Intent getIntent(IntentInfo intentInfo) {
+        Intent intent = new Intent();
+        intent.setComponent(new ComponentName(intentInfo.packageName, intentInfo.className));
+        intent.setAction(intentInfo.action.get(0));
+        for (String s : intentInfo.category) {
+            intent.addCategory(s);
+        }
+        for (IntentFilter.IntentData intentData : intentInfo.data) {
+            String scheme = "file://";
+            String host = "";
+            String port = "";
+            if (intentData.scheme != null) {
+                scheme = intentData.scheme + "://";
+            }
+            if (intentData.host != null) {
+                host = intentData.host;
+            }
+            if (intentData.port != null) {
+                port = ":" + intentData.port;
+            }
+
+            if (intentData.mimeType == null) {
+                Uri uri = Uri.parse(scheme + host + port + "/baidu.com");
+                intent.setDataAndType(uri, "text/plain");
+            }
+
+            if (intentData.mimeType != null && intentData.mimeType.contains("image/")) {
+                //将项目图片转换为uri
+                String imagePath = "/" + Environment.getExternalStorageDirectory() + "/oooo.png";
+                Uri uri = Uri.parse(scheme + host + port + imagePath);
+                intent.setDataAndType(uri, intentData.mimeType);
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+            }
+            if (intentData.mimeType != null && intentData.mimeType.contains("text/")) {
+                intent.putExtra(Intent.EXTRA_SUBJECT, "消息标题");
+                intent.putExtra(Intent.EXTRA_TEXT, "消息内容");
+                intent.setType(intentData.mimeType);
+            }
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return intent;
+    }
+
+    class IntentInfo {
+        String packageName;
+        String className;
+        List<String> action;
+        List<String> category;
+        List<IntentFilter.IntentData> data;
+    }
+
     private class IntentInfoAdapter extends RecyclerView.Adapter<IntentInfoHolder> {
         @Override
         public IntentInfoHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_intent_info,parent,false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_intent_info, parent, false);
             return new IntentInfoHolder(view);
         }
 
@@ -177,63 +206,70 @@ public class DetailActivity extends Activity {
         }
     }
 
-    private class IntentInfoHolder extends RecyclerView.ViewHolder{
+    private class IntentInfoHolder extends RecyclerView.ViewHolder {
 
         private final TextView tvInfo;
+        private final Button btnShortcut;
+        private final Button btnPreview;
 
         public IntentInfoHolder(View itemView) {
             super(itemView);
             tvInfo = (TextView) itemView.findViewById(R.id.tv_info);
-            tvInfo.setOnClickListener(new View.OnClickListener() {
+            btnPreview = (Button) itemView.findViewById(R.id.btn_preview);
+            btnShortcut = (Button) itemView.findViewById(R.id.btn_shortcut);
+            btnShortcut.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    IntentInfo intentInfo = data.get(getAdapterPosition());
+                    final Intent intent = getIntent(intentInfo);
+
+                    final String shortcutName = apkInfo.loadLabel(getPackageManager()).toString();
+                    final Bitmap shortcutIcon = FileUtils.mergeBitmap(drawableToBitmap(apkInfo.loadIcon(getPackageManager())), drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher)));
+
+                    View dialogView = View.inflate(v.getContext(), R.layout.layout_dialog, null);
+                    final ImageView ivIcon = (ImageView) dialogView.findViewById(R.id.iv_icon);
+                    final EditText tvName = (EditText) dialogView.findViewById(R.id.tv_name);
+                    ivIcon.setImageBitmap(shortcutIcon);
+                    tvName.setText(shortcutName);
+                    new AlertDialog.Builder(v.getContext())
+                            .setView(dialogView)
+                            .setPositiveButton("添加", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    String name = tvName.getText().toString();
+                                    Bitmap icon = FileUtils.drawableToBitmap(ivIcon.getDrawable());
+                                    ShortcutUtils.installShortcut(v.getContext(), name, icon, intent, new ShortcutUtils.ActionListener() {
+                                        @Override
+                                        public void onFailure(int i) {
+                                            ToastUtils.show("添加失败：" + i);
+                                        }
+
+                                        @Override
+                                        public void onSuccess() {
+
+                                            ToastUtils.show("添加成功");
+                                        }
+                                    });
+                                }
+                            })
+                            .setNegativeButton("取消", null)
+                            .show();
+
+
+                }
+            });
+            btnPreview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     IntentInfo intentInfo = data.get(getAdapterPosition());
-                    Intent intent = new Intent();
-                    intent.setComponent(new ComponentName(intentInfo.packageName,intentInfo.className));
-                    intent.setAction(intentInfo.action.get(0));
-                    for (String s : intentInfo.category) {
-                        intent.addCategory(s);
-                    }
-                    for (IntentFilter.IntentData intentData : intentInfo.data) {
-                        String scheme = "file://";
-                        String host = "";
-                        String port = "";
-                        if (intentData.scheme != null) {
-                            scheme = intentData.scheme + "://";
-                        }
-                        if (intentData.host != null) {
-                            host = intentData.host;
-                        }
-                        if (intentData.port != null) {
-                            port = ":"+intentData.port;
-                        }
-
-                        if (intentData.mimeType == null) {
-                            Uri uri = Uri.parse(scheme+host+port+"/baidu.com");
-                            intent.setDataAndType(uri,"text/plain");
-                        }
-
-                        if (intentData.mimeType!=null && intentData.mimeType.contains("image/")){
-                            //将项目图片转换为uri
-                            String imagePath = "/" + Environment.getExternalStorageDirectory() + "/oooo.png";
-                            Uri uri = Uri.parse(scheme+host+port+imagePath);
-                            intent.setDataAndType(uri,intentData.mimeType);
-                            intent.putExtra(Intent.EXTRA_STREAM, uri);
-                        }
-                        if (intentData.mimeType!=null && intentData.mimeType.contains("text/")){
-                            intent.putExtra(Intent.EXTRA_SUBJECT, "消息标题");
-                            intent.putExtra(Intent.EXTRA_TEXT, "消息内容");
-                            intent.setType(intentData.mimeType);
-                        }
-                    }
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Intent intent = getIntent(intentInfo);
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         try {
                             v.getContext().startActivity(intent);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }else {
+                    } else {
                         ToastUtils.show("找不到");
                     }
                 }

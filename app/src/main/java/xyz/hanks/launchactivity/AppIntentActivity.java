@@ -31,17 +31,17 @@ public class AppIntentActivity extends Activity {
     }
 
     @OnClick(R.id.btn_timeline)
-    public void circle(){
+    public void circle() {
         shareToCircle();
     }
 
     @OnClick(R.id.btn_chat)
-    public void friend(){
+    public void friend() {
         shareToFriend();
     }
 
 
-    private void  shareToFriend(){
+    private void shareToFriend() {
         Intent intent = new Intent();
         ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
         intent.setComponent(comp);
@@ -52,7 +52,7 @@ public class AppIntentActivity extends Activity {
         startActivity(intent);
     }
 
-    private void  shareToCircle(){
+    private void shareToCircle() {
         Intent intent = new Intent();
         ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
         intent.setComponent(comp);

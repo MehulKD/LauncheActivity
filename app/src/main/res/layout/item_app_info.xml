@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:paddingBottom="8dp"
+              android:paddingTop="8dp">
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerInside"/>
 
     <TextView
-        android:id="@+id/tv_info"
+        android:id="@+id/tv_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:lines="1"
-        android:textColor="#000"
-        android:textIsSelectable="true"/>
+        android:gravity="center"
+        android:maxLines="1"
+        android:textSize="12sp"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_alignParentBottom="true"
-        android:background="#e1e1e1"/>
-</RelativeLayout>
+</LinearLayout>

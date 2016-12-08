@@ -1,5 +1,6 @@
 package xyz.hanks.launchactivity.model;
 
+import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.Drawable;
 
 /**
@@ -7,6 +8,7 @@ import android.graphics.drawable.Drawable;
  */
 public class ApkInfo {
 
+    private ApplicationInfo applicationInfo;
     private final String path;
     private String packageName;
     private String versionName;
@@ -22,6 +24,14 @@ public class ApkInfo {
 
     public ApkInfo(String path) {
         this.path = path;
+    }
+
+    public ApplicationInfo getApplicationInfo() {
+        return applicationInfo;
+    }
+
+    public void setApplicationInfo(ApplicationInfo applicationInfo) {
+        this.applicationInfo = applicationInfo;
     }
 
     public String getPath() {

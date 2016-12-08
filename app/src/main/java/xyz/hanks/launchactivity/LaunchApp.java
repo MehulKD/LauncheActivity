@@ -8,6 +8,7 @@ import android.app.Application;
 
 public class LaunchApp extends Application {
     public static LaunchApp app;
+
     @Override
     public void onCreate() {
         super.onCreate();
