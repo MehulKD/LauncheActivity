@@ -2,6 +2,7 @@ package xyz.hanks.launchactivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.res.AssetManager;
 import android.net.Uri;
@@ -28,7 +29,9 @@ import xyz.hanks.launchactivity.util.ToastUtils;
  */
 public class XmlSourceViewerActivity extends BaseActivity {
 
-    public static final String APK_PATH = "apk_path";
+
+    public static final String EXTRA_APPLICATION = "extra_application";
+
     private final WebViewClient webViewClient = new WebViewClient() {
 
         @Override
@@ -65,11 +68,11 @@ public class XmlSourceViewerActivity extends BaseActivity {
     };
     private WebView webView;
     private String sourceCodeText;
-    private String apkPath;
+    private ApplicationInfo apkInfo;
 
-    public static void start(Context context, String apkPath) {
+    public static void start(Context context, ApplicationInfo apkInfo) {
         Intent starter = new Intent(context, XmlSourceViewerActivity.class);
-        starter.putExtra(APK_PATH, apkPath);
+        starter.putExtra(EXTRA_APPLICATION, apkInfo);
         context.startActivity(starter);
     }
 
@@ -77,22 +80,26 @@ public class XmlSourceViewerActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.source_viewer);
 
-        apkPath = getIntent().getStringExtra(APK_PATH);
-        File apkFile = new File(apkPath);
+        apkInfo = getIntent().getParcelableExtra(EXTRA_APPLICATION);
+        File apkFile = new File(apkInfo.sourceDir);
         if (!apkFile.exists()) {
             ToastUtils.show("file don't exists: " + apkFile.getAbsolutePath());
             finish();
         }
 
-        getSupportActionBar().setTitle("title");
-        getSupportActionBar().setSubtitle(apkPath);
+        if (mToolbar != null) {
+            mToolbar.setTitle(apkInfo.loadLabel(getPackageManager()));
+            mToolbar.setSubtitle(getString(R.string.manifest));
+        }
 
         webView = (WebView) findViewById(R.id.source_view);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setDefaultTextEncodingName("UTF-8");
         webView.setWebViewClient(webViewClient);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
 
         if (savedInstanceState != null && savedInstanceState.containsKey("source")) {
             sourceCodeText = savedInstanceState.getString("source");
@@ -103,6 +110,11 @@ public class XmlSourceViewerActivity extends BaseActivity {
         } else {
             loadSourceCode(sourceCodeText);
         }
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.source_viewer;
     }
 
     @Override
@@ -127,7 +139,7 @@ public class XmlSourceViewerActivity extends BaseActivity {
         @Override
         protected String doInBackground(PackageInfo... params) {
             try {
-                ApkParser parser = new ApkParser(apkPath);
+                ApkParser parser = new ApkParser(apkInfo.sourceDir);
                 final String source = parser.getManifestXml();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     return Html.escapeHtml(source);

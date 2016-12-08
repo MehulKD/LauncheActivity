@@ -1,5 +1,6 @@
 package xyz.hanks.launchactivity;
 
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -8,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,17 +34,21 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        setTitle(getString(R.string.app_name));
+
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
         adapter = new AppInfoAdapter();
         recyclerView.setAdapter(adapter);
         getData();
     }
 
-    public void weixin(View view) {
-
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_main;
     }
+
 
     private void getData() {
         new Thread() {
@@ -81,6 +88,26 @@ public class MainActivity extends BaseActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.app_setting:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    protected int getNavigationIcon() {
+        return R.drawable.ic_menu_white_24dp;
+    }
 
     private class AppInfoAdapter extends RecyclerView.Adapter<AppInfoHolder> {
         @Override

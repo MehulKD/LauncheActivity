@@ -14,6 +14,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -45,22 +47,16 @@ import static xyz.hanks.launchactivity.util.FileUtils.drawableToBitmap;
 
 public class DetailActivity extends BaseActivity {
 
-    public static final String APK_PATH = "apk_path";
-    public static final String PACKAGE_NAME = "package_name";
     public static final String EXTRA_APPLICATION = "extra_application";
 
     @BindView(R.id.recyclerView) RecyclerView recyclerView;
 
-    private String apkPath;
-    private String packageName;
     private IntentInfoAdapter adapter;
     private List<IntentInfo> data = new ArrayList<>();
     private ApplicationInfo apkInfo;
 
     public static void start(Context context, ApplicationInfo applicationInfo) {
         Intent starter = new Intent(context, DetailActivity.class);
-//        starter.putExtra(APK_PATH, apkPath);
-//        starter.putExtra(PACKAGE_NAME, packageName);
         starter.putExtra(EXTRA_APPLICATION, applicationInfo);
         context.startActivity(starter);
     }
@@ -68,19 +64,16 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
 
         apkInfo = getIntent().getParcelableExtra(EXTRA_APPLICATION);
-        apkPath = apkInfo.sourceDir;
-        packageName = apkInfo.packageName;
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new IntentInfoAdapter();
         recyclerView.setAdapter(adapter);
 
         try {
-            ApkParser parser = new ApkParser(new File(apkPath));
+            ApkParser parser = new ApkParser(new File(apkInfo.sourceDir));
             AndroidManifest androidManifest = new AndroidManifest(parser.getApkMeta(), parser.getManifestXml());
             for (AndroidComponent component : androidManifest.getComponents()) {
                 boolean exported = component.exported;
@@ -98,15 +91,14 @@ public class DetailActivity extends BaseActivity {
                 }
                 String name = component.name;
                 if (name.startsWith(".")) {
-                    name = packageName + name;
+                    name = apkInfo.packageName + name;
                 }
                 for (IntentFilter intentFilter : intentFilters) {
                     List<String> actions = intentFilter.actions;
                     List<String> categories = intentFilter.categories;
                     List<IntentFilter.IntentData> dataList = intentFilter.dataList;
-
                     IntentInfo intentInfo = new IntentInfo();
-                    intentInfo.packageName = packageName;
+                    intentInfo.packageName = apkInfo.packageName;
                     intentInfo.className = name;
                     intentInfo.action = actions;
                     intentInfo.category = categories;
@@ -118,6 +110,30 @@ public class DetailActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_detail;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+            case R.id.app_source:
+                XmlSourceViewerActivity.start(this, apkInfo);
+                break;
+        }
+        return true;
     }
 
     @NonNull
@@ -232,29 +248,18 @@ public class DetailActivity extends BaseActivity {
                     ivIcon.setImageBitmap(shortcutIcon);
                     tvName.setText(shortcutName);
                     new AlertDialog.Builder(v.getContext())
+                            .setTitle(R.string.title_add_shortcut)
                             .setView(dialogView)
-                            .setPositiveButton("添加", new DialogInterface.OnClickListener() {
+                            .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     String name = tvName.getText().toString();
                                     Bitmap icon = FileUtils.drawableToBitmap(ivIcon.getDrawable());
-                                    ShortcutUtils.installShortcut(v.getContext(), name, icon, intent, new ShortcutUtils.ActionListener() {
-                                        @Override
-                                        public void onFailure(int i) {
-                                            ToastUtils.show("添加失败：" + i);
-                                        }
-
-                                        @Override
-                                        public void onSuccess() {
-
-                                            ToastUtils.show("添加成功");
-                                        }
-                                    });
+                                    ShortcutUtils.installShortcut(v.getContext(), name, icon, intent);
                                 }
                             })
-                            .setNegativeButton("取消", null)
+                            .setNegativeButton(R.string.cancel, null)
                             .show();
-
 
                 }
             });
@@ -270,7 +275,7 @@ public class DetailActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                     } else {
-                        ToastUtils.show("找不到");
+                        ToastUtils.show(getString(R.string.not_found_activity));
                     }
                 }
             });
