@@ -1,6 +1,5 @@
 package xyz.hanks.launchactivity;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,22 +11,21 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
+ * 已知的 intent
  * Created by hanks on 2016/12/6.
  */
 
-public class AppIntentActivity extends Activity {
-
-    public final static String WEIXIN_CHATTING_MIMETYPE = "vnd.android.cursor.item/vnd.com.tencent.mm.chatting.profile";//微信聊天
-    public final static String WEIXIN_SNS_MIMETYPE = "vnd.android.cursor.item/vnd.com.tencent.mm.plugin.sns.timeline";//微信朋友圈
-    public final static String WEIXIN_VIDIO_MIMETYPE = "vnd.android.cursor.item/vnd.com.tencent.mm.chatting.voip.video";//微信视频
-
+public class AppIntentActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_app_intent);
         ButterKnife.bind(this);
+    }
 
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_app_intent;
     }
 
     @OnClick(R.id.btn_timeline)

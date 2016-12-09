@@ -1,7 +1,6 @@
 package xyz.hanks.launchactivity;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,13 +12,12 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -35,6 +33,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import xyz.hanks.launchactivity.util.FileUtils;
 import xyz.hanks.launchactivity.util.ShortcutUtils;
 import xyz.hanks.launchactivity.util.ToastUtils;
@@ -70,6 +69,7 @@ public class DetailActivity extends BaseActivity {
         if (mToolbar != null) {
             getSupportActionBar().setTitle(apkInfo.loadLabel(getPackageManager()));
             mToolbar.setSubtitle(apkInfo.packageName);
+            mToolbar.setSubtitleTextAppearance(this, R.style.ToolbarSmallSubtitleAppearance);
         }
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new IntentInfoAdapter();
@@ -142,7 +142,7 @@ public class DetailActivity extends BaseActivity {
     @NonNull
     private Intent getIntent(IntentInfo intentInfo) {
         Intent intent = new Intent();
-        intent.setComponent(new ComponentName(intentInfo.packageName, intentInfo.className));
+        //intent.setComponent(new ComponentName(intentInfo.packageName, intentInfo.className));
         intent.setAction(intentInfo.action.get(0));
         for (String s : intentInfo.category) {
             intent.addCategory(s);
@@ -203,20 +203,38 @@ public class DetailActivity extends BaseActivity {
         public void onBindViewHolder(IntentInfoHolder holder, int position) {
             IntentInfo intentInfo = data.get(position);
             holder.tvActivityName.setText(intentInfo.className);
+
             StringBuilder sb = new StringBuilder();
-            sb.append("<b><font color=#FF4081>Action</font></b></div><br/>");
             for (String s : intentInfo.action) {
-                sb.append("&emsp;").append(s).append("\n");
+                sb.append(s).append("\n");
             }
-            sb.append("<br/><b><font color=#FF4081>Category</font></b><br/>");
+            if (sb.toString().endsWith("\n")) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            holder.tvAction.setText(sb.toString());
+
+            sb.setLength(0);
             for (String s : intentInfo.category) {
-                sb.append("&emsp;").append(s).append("\n");
+                sb.append(s).append("\n");
             }
-            sb.append("<br/><b><font color=#FF4081>Data</font></b><br/>");
+            if (sb.toString().endsWith("\n")) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            holder.tvCategory.setText(sb.toString());
+
+            sb.setLength(0);
             for (IntentFilter.IntentData s : intentInfo.data) {
-                sb.append("&emsp;").append(s.toString()).append("\n");
+                String scheme = TextUtils.isEmpty(s.scheme) ? "file" : s.scheme;
+                String host = TextUtils.isEmpty(s.host) ? "" : s.host;
+                String port = TextUtils.isEmpty(s.port) ? "" : ":" + s.port;
+                String path = TextUtils.isEmpty(s.path) ? "" : "/" + s.path;
+                String type = TextUtils.isEmpty(s.mimeType) ? "" : "  (" + s.mimeType + ")";
+                sb.append(String.format("%s://%s%s%s%s", scheme, host, port, path, type)).append("\n");
             }
-            holder.tvInfo.setText(Html.fromHtml(sb.toString()));
+            if (sb.toString().endsWith("\n")) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            holder.tvData.setText(sb.toString());
         }
 
         @Override
@@ -225,65 +243,64 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
-    private class IntentInfoHolder extends RecyclerView.ViewHolder {
+    public class IntentInfoHolder extends RecyclerView.ViewHolder {
 
-        private final TextView tvInfo;
-        private final TextView tvActivityName;
-        private final Button btnShortcut;
-        private final Button btnPreview;
+        @BindView(R.id.tv_activity_name) TextView tvActivityName;
+        @BindView(R.id.tv_action) TextView tvAction;
+        @BindView(R.id.tv_category) TextView tvCategory;
+        @BindView(R.id.tv_data) TextView tvData;
+        @BindView(R.id.btn_shortcut) ImageView btnShortcut;
+        @BindView(R.id.btn_preview) ImageView btnPreview;
+        @BindView(R.id.btn_share) ImageView btnShare;
 
         public IntentInfoHolder(View itemView) {
             super(itemView);
-            tvActivityName = (TextView) itemView.findViewById(R.id.tv_activity_name);
-            tvInfo = (TextView) itemView.findViewById(R.id.tv_info);
-            btnPreview = (Button) itemView.findViewById(R.id.btn_preview);
-            btnShortcut = (Button) itemView.findViewById(R.id.btn_shortcut);
-            btnShortcut.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    IntentInfo intentInfo = data.get(getAdapterPosition());
-                    final Intent intent = getIntent(intentInfo);
+            ButterKnife.bind(this, itemView);
+        }
 
-                    final String shortcutName = apkInfo.loadLabel(getPackageManager()).toString();
-                    final Bitmap shortcutIcon = FileUtils.mergeBitmap(drawableToBitmap(apkInfo.loadIcon(getPackageManager())), drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher)));
+        @OnClick(R.id.btn_shortcut)
+        public void addShortcut() {
+            final Context context = itemView.getContext();
 
-                    View dialogView = View.inflate(v.getContext(), R.layout.layout_dialog, null);
-                    final ImageView ivIcon = (ImageView) dialogView.findViewById(R.id.iv_icon);
-                    final EditText tvName = (EditText) dialogView.findViewById(R.id.tv_name);
-                    ivIcon.setImageBitmap(shortcutIcon);
-                    tvName.setText(shortcutName);
-                    new AlertDialog.Builder(v.getContext())
-                            .setTitle(R.string.title_add_shortcut)
-                            .setView(dialogView)
-                            .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    String name = tvName.getText().toString();
-                                    Bitmap icon = FileUtils.drawableToBitmap(ivIcon.getDrawable());
-                                    ShortcutUtils.installShortcut(v.getContext(), name, icon, intent);
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, null)
-                            .show();
+            IntentInfo intentInfo = data.get(getAdapterPosition());
+            final Intent intent = getIntent(intentInfo);
 
-                }
-            });
-            btnPreview.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    IntentInfo intentInfo = data.get(getAdapterPosition());
-                    Intent intent = getIntent(intentInfo);
-                    if (intent.resolveActivity(getPackageManager()) != null) {
-                        try {
-                            v.getContext().startActivity(intent);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+            final String shortcutName = apkInfo.loadLabel(getPackageManager()).toString();
+            final Bitmap shortcutIcon = FileUtils.mergeBitmap(drawableToBitmap(apkInfo.loadIcon(getPackageManager())), drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher)));
+
+            View dialogView = View.inflate(context, R.layout.layout_dialog, null);
+            final ImageView ivIcon = (ImageView) dialogView.findViewById(R.id.iv_icon);
+            final EditText tvName = (EditText) dialogView.findViewById(R.id.tv_name);
+            ivIcon.setImageBitmap(shortcutIcon);
+            tvName.setText(shortcutName);
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.title_add_shortcut)
+                    .setView(dialogView)
+                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String name = tvName.getText().toString();
+                            Bitmap icon = FileUtils.drawableToBitmap(ivIcon.getDrawable());
+                            ShortcutUtils.installShortcut(context, name, icon, intent);
                         }
-                    } else {
-                        ToastUtils.show(getString(R.string.not_found_activity));
-                    }
+                    })
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+        }
+
+        @OnClick(R.id.btn_preview)
+        public void previewIntent() {
+            IntentInfo intentInfo = data.get(getAdapterPosition());
+            Intent intent = getIntent(intentInfo);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                try {
+                    itemView.getContext().startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            });
+            } else {
+                ToastUtils.show(getString(R.string.not_found_activity));
+            }
         }
     }
 }

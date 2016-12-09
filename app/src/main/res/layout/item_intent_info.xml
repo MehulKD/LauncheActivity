@@ -1,68 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:orientation="vertical"
+              android:paddingTop="16dp">
 
     <TextView
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:id="@+id/tv_activity_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:gravity="center_vertical"
         android:textColor="#000"
         android:textIsSelectable="true"
         android:textSize="14sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        tools:text="ActivityName"/>
 
-    <TextView
-        android:id="@+id/tv_info"
+    <LinearLayout
+
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_width="match_parent"
-        android:lineSpacingMultiplier="1.2"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_activity_name"
-        android:layout_marginTop="4dp"
-        android:gravity="center_vertical"
-        android:textColor="#000"
-        android:textIsSelectable="true"
-        android:textSize="12sp"/>
+        android:gravity="top"
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="Action"
+            android:textSize="12sp"/>
 
-    <Button
-        android:id="@+id/btn_shortcut"
+        <EditText
+            android:id="@+id/tv_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="@string/no_action"
+            android:lineSpacingMultiplier="1.3"
+            android:textColor="#1F1F1F"
+            android:textSize="12sp"
+            tools:text="android.intent.action.MAIN"/>
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textSize="12sp"/>
+
+        <EditText
+            android:id="@+id/tv_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="@string/no_category"
+            android:lineSpacingMultiplier="1.3"
+            android:textColor="#1F1F1F"
+            android:textSize="12sp"
+            tools:text="android.intent.action.MAIN\nandroid.intent.action.MAIN"/>
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:text="Data"
+            android:textSize="12sp"/>
+
+        <EditText
+            android:id="@+id/tv_data"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="@string/no_data"
+            android:lineSpacingMultiplier="1.3"
+            android:textColor="#1F1F1F"
+            android:textSize="12sp"
+            tools:text="android.intent.action.MAIN\nandroid.intent.action.MAIN"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/tv_info"
-        android:layout_marginRight="90dp"
-        android:elevation="2dp"
-        android:fontFamily="14pt"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="添加快捷"
-        android:textSize="12sp">
-    </Button>
+        android:layout_height="56dp"
+        android:layout_gravity="right"
+        android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/btn_share"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_share_black_24dp"/>
 
-    <Button
-        android:id="@+id/btn_preview"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/tv_info"
-        android:elevation="2dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="预览"
-        android:textSize="12sp">
-    </Button>
+        <ImageView
+            android:id="@+id/btn_shortcut"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_add_box_black_24dp">
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/btn_preview"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="4dp"
+            android:padding="12dp"
+            android:src="@drawable/ic_launch_black_24dp"/>
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="#e1e1e1"/>
-</RelativeLayout>
+        android:background="#E6E6E6"/>
+
+</LinearLayout>

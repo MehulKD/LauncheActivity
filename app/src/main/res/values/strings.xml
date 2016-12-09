@@ -80,7 +80,16 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="base_setting">基础设置</string>
-    <string name="about">关于</string>
-    <string name="support">支持</string>
+    <string name="about">关于软件</string>
+    <string name="support">支持开发者</string>
     <string name="tip_update">更新</string>
+    <string name="share">分享</string>
+    <string name="preview">预览</string>
+    <string name="add_shortcut">添加快捷</string>
+    <string name="no_data">没有设置 Data</string>
+    <string name="no_action">没有设置 Action</string>
+    <string name="no_category">没有设置 Category</string>
+    <string name="udpate">更新版本</string>
+    <string name="version">"版本号："</string>
+    <string name="intro">        这是一款开发者辅助工具，帮助开发者发现手机上的应用的另一面，原理是利用 Android 提供的隐式启动 Activity 来快速启动某个应用的某个界面，如快速发朋友圈、扫一扫，快速切换 vpn 等。</string>
 </resources>

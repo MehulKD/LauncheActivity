@@ -18,6 +18,27 @@
 
 
         <TextView
+            android:id="@+id/tv_update"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="20dp"
+            android:drawableTop="@mipmap/ic_launcher"
+            android:gravity="center_vertical"
+            android:lineSpacingMultiplier="1.5"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="20dp"
+            android:text="@string/intro"
+            android:textColor="@color/black"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/divider"/>
+
+        <TextView
+            android:id="@+id/tv_about"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:gravity="center_vertical"
@@ -32,12 +53,27 @@
             android:background="@color/divider"/>
 
         <TextView
+            android:id="@+id/tv_support"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:gravity="center_vertical"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="@string/support"
+            android:textColor="@color/black"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/divider"/>
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="1.0"
             android:textColor="@color/black"/>
 
         <View
