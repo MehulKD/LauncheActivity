@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CheckBoxLayout">
+        <attr name="singleChoice" format="boolean"/>
+        <attr name="singleItem" format="boolean"/>
+    </declare-styleable>
+</resources>

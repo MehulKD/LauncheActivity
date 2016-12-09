@@ -92,4 +92,5 @@
     <string name="udpate">更新版本</string>
     <string name="version">"版本号："</string>
     <string name="intro">        这是一款开发者辅助工具，帮助开发者发现手机上的应用的另一面，原理是利用 Android 提供的隐式启动 Activity 来快速启动某个应用的某个界面，如快速发朋友圈、扫一扫，快速切换 vpn 等。</string>
+    <string name="add_new_checkbox">添加</string>
 </resources>

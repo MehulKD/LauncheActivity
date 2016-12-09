@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -203,38 +204,28 @@ public class DetailActivity extends BaseActivity {
         public void onBindViewHolder(IntentInfoHolder holder, int position) {
             IntentInfo intentInfo = data.get(position);
             holder.tvActivityName.setText(intentInfo.className);
+            holder.layoutAction.removeAllViews();
+            holder.layoutCategory.removeAllViews();
+            holder.layoutData.removeAllViews();
 
-            StringBuilder sb = new StringBuilder();
             for (String s : intentInfo.action) {
-                sb.append(s).append("\n");
+                holder.layoutAction.addCheckEditor(s);
             }
-            if (sb.toString().endsWith("\n")) {
-                sb.deleteCharAt(sb.length() - 1);
-            }
-            holder.tvAction.setText(sb.toString());
-
-            sb.setLength(0);
             for (String s : intentInfo.category) {
-                sb.append(s).append("\n");
+                holder.layoutCategory.addCheckEditor(s);
             }
-            if (sb.toString().endsWith("\n")) {
-                sb.deleteCharAt(sb.length() - 1);
-            }
-            holder.tvCategory.setText(sb.toString());
-
-            sb.setLength(0);
             for (IntentFilter.IntentData s : intentInfo.data) {
                 String scheme = TextUtils.isEmpty(s.scheme) ? "file" : s.scheme;
                 String host = TextUtils.isEmpty(s.host) ? "" : s.host;
                 String port = TextUtils.isEmpty(s.port) ? "" : ":" + s.port;
                 String path = TextUtils.isEmpty(s.path) ? "" : "/" + s.path;
-                String type = TextUtils.isEmpty(s.mimeType) ? "" : "  (" + s.mimeType + ")";
-                sb.append(String.format("%s://%s%s%s%s", scheme, host, port, path, type)).append("\n");
+                String type = TextUtils.isEmpty(s.mimeType) ? "" : s.mimeType;
+
+                if (!TextUtils.isEmpty(type)) {
+                    holder.layoutMimeType.addCheckEditor(type);
+                }
+                holder.layoutData.addCheckEditor("", String.format("%s://%s%s%s", scheme, host, port, path));
             }
-            if (sb.toString().endsWith("\n")) {
-                sb.deleteCharAt(sb.length() - 1);
-            }
-            holder.tvData.setText(sb.toString());
         }
 
         @Override
@@ -246,9 +237,11 @@ public class DetailActivity extends BaseActivity {
     public class IntentInfoHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.tv_activity_name) TextView tvActivityName;
-        @BindView(R.id.tv_action) TextView tvAction;
-        @BindView(R.id.tv_category) TextView tvCategory;
-        @BindView(R.id.tv_data) TextView tvData;
+        @BindView(R.id.layout_action) CheckBoxLayout layoutAction;
+        @BindView(R.id.layout_category) CheckBoxLayout layoutCategory;
+        @BindView(R.id.layout_mimeType) CheckBoxLayout layoutMimeType;
+        @BindView(R.id.layout_data) CheckBoxLayout layoutData;
+        @BindView(R.id.cb_component) CheckBox cbComponent;
         @BindView(R.id.btn_shortcut) ImageView btnShortcut;
         @BindView(R.id.btn_preview) ImageView btnPreview;
         @BindView(R.id.btn_share) ImageView btnShare;

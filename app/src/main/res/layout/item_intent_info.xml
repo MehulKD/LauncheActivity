@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -7,107 +8,113 @@
               android:orientation="vertical"
               android:paddingTop="16dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cb_component"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <TextView
+            android:id="@+id/tv_activity_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:textColor="#000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="ActivityNameActivityNameActivityNameActivityName"/>
+    </LinearLayout>
+
     <TextView
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:id="@+id/tv_activity_name"
+        android:layout_marginTop="8dp"
+        android:text="Action"
+        android:textSize="12sp"/>
+
+    <xyz.hanks.launchactivity.CheckBoxLayout
+        android:id="@+id/layout_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center_vertical"
-        android:textColor="#000"
-        android:textIsSelectable="true"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        tools:text="ActivityName"/>
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="16dp"/>
 
-    <LinearLayout
-
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:text="Category"
+        android:textSize="12sp"/>
+
+    <xyz.hanks.launchactivity.CheckBoxLayout
+        android:id="@+id/layout_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top"
-        android:orientation="horizontal">
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="16dp"/>
 
-        <TextView
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="Action"
-            android:textSize="12sp"/>
-
-        <EditText
-            android:id="@+id/tv_action"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="@string/no_action"
-            android:lineSpacingMultiplier="1.3"
-            android:textColor="#1F1F1F"
-            android:textSize="12sp"
-            tools:text="android.intent.action.MAIN"/>
-    </LinearLayout>
-
-    <LinearLayout
-
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:text="Data"
+        android:textSize="12sp"/>
+
+    <xyz.hanks.launchactivity.CheckBoxLayout
+        android:id="@+id/layout_data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top"
-        android:orientation="horizontal">
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="16dp"
+        app:singleChoice="true"/>
 
-        <TextView
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="Category"
-            android:textSize="12sp"/>
-
-        <EditText
-            android:id="@+id/tv_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="@string/no_category"
-            android:lineSpacingMultiplier="1.3"
-            android:textColor="#1F1F1F"
-            android:textSize="12sp"
-            tools:text="android.intent.action.MAIN\nandroid.intent.action.MAIN"/>
-    </LinearLayout>
-
-    <LinearLayout
-
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:text="MimeType"
+        android:textSize="12sp"/>
+
+    <xyz.hanks.launchactivity.CheckBoxLayout
+        android:id="@+id/layout_mimeType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top"
-        android:orientation="horizontal">
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="16dp"
+        app:singleChoice="true"/>
 
-        <TextView
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:text="Data"
-            android:textSize="12sp"/>
-
-        <EditText
-            android:id="@+id/tv_data"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="@string/no_data"
-            android:lineSpacingMultiplier="1.3"
-            android:textColor="#1F1F1F"
-            android:textSize="12sp"
-            tools:text="android.intent.action.MAIN\nandroid.intent.action.MAIN"/>
-    </LinearLayout>
-
-    <LinearLayout
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:text="Extra"
+        android:textSize="12sp"/>
+
+    <xyz.hanks.launchactivity.CheckBoxLayout
+        android:id="@+id/layout_extra"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="16dp"/>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="56dp"
         android:layout_gravity="right"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:orientation="horizontal">
 
         <ImageView
