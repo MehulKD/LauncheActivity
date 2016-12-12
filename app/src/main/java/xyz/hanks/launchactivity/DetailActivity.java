@@ -1,14 +1,15 @@
 package xyz.hanks.launchactivity;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -104,9 +105,9 @@ public class DetailActivity extends BaseActivity {
                     IntentInfo intentInfo = new IntentInfo();
                     intentInfo.packageName = apkInfo.packageName;
                     intentInfo.className = name;
-                    intentInfo.action = actions;
-                    intentInfo.category = categories;
-                    intentInfo.data = dataList;
+                    intentInfo.actionList = actions;
+                    intentInfo.categoryList = categories;
+                    intentInfo.dataList = dataList;
                     data.add(intentInfo);
                 }
             }
@@ -143,54 +144,53 @@ public class DetailActivity extends BaseActivity {
     @NonNull
     private Intent getIntent(IntentInfo intentInfo) {
         Intent intent = new Intent();
-        //intent.setComponent(new ComponentName(intentInfo.packageName, intentInfo.className));
-        intent.setAction(intentInfo.action.get(0));
-        for (String s : intentInfo.category) {
-            intent.addCategory(s);
+
+        if (!TextUtils.isEmpty(intentInfo.packageName) && !TextUtils.isEmpty(intentInfo.className)) {
+            intent.setComponent(new ComponentName(intentInfo.packageName, intentInfo.className));
         }
-        for (IntentFilter.IntentData intentData : intentInfo.data) {
-            String scheme = "file://";
-            String host = "";
-            String port = "";
-            if (intentData.scheme != null) {
-                scheme = intentData.scheme + "://";
-            }
-            if (intentData.host != null) {
-                host = intentData.host;
-            }
-            if (intentData.port != null) {
-                port = ":" + intentData.port;
-            }
 
-            if (intentData.mimeType == null) {
-                Uri uri = Uri.parse(scheme + host + port + "/baidu.com");
-                intent.setDataAndType(uri, "text/plain");
-            }
+        if (!TextUtils.isEmpty(intentInfo.action)) {
+            intent.setAction(intentInfo.action);
+        }
 
-            if (intentData.mimeType != null && intentData.mimeType.contains("image/")) {
-                //将项目图片转换为uri
-                String imagePath = "/" + Environment.getExternalStorageDirectory() + "/oooo.png";
-                Uri uri = Uri.parse(scheme + host + port + imagePath);
-                intent.setDataAndType(uri, intentData.mimeType);
-                intent.putExtra(Intent.EXTRA_STREAM, uri);
-            }
-            if (intentData.mimeType != null && intentData.mimeType.contains("text/")) {
-                intent.putExtra(Intent.EXTRA_SUBJECT, "消息标题");
-                intent.putExtra(Intent.EXTRA_TEXT, "消息内容");
-                intent.setType(intentData.mimeType);
+        if (intentInfo.categoryList != null) {
+            for (String s : intentInfo.categoryList) {
+                intent.addCategory(s);
             }
         }
+
+        if (!TextUtils.isEmpty(intentInfo.data)) {
+            if (!TextUtils.isEmpty(intentInfo.mimeType)) {
+                intent.setDataAndType(Uri.parse(intentInfo.data), intentInfo.mimeType);
+            } else {
+                intent.setData(Uri.parse(intentInfo.data));
+            }
+        }
+
+        if (intentInfo.extra != null) {
+            intent.putExtras(intentInfo.extra);
+        }
+
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        }
         return intent;
     }
 
     class IntentInfo {
         String packageName;
         String className;
-        List<String> action;
-        List<String> category;
-        List<IntentFilter.IntentData> data;
+        String action;
+        String data;
+        String mimeType;
+        List<String> categoryList;
+        Bundle extra;
+
+        // extra
+        List<String> actionList;
+        List<IntentFilter.IntentData> dataList;
     }
 
     private class IntentInfoAdapter extends RecyclerView.Adapter<IntentInfoHolder> {
@@ -208,13 +208,13 @@ public class DetailActivity extends BaseActivity {
             holder.layoutCategory.removeAllViews();
             holder.layoutData.removeAllViews();
 
-            for (String s : intentInfo.action) {
+            for (String s : intentInfo.actionList) {
                 holder.layoutAction.addCheckEditor(s);
             }
-            for (String s : intentInfo.category) {
+            for (String s : intentInfo.categoryList) {
                 holder.layoutCategory.addCheckEditor(s);
             }
-            for (IntentFilter.IntentData s : intentInfo.data) {
+            for (IntentFilter.IntentData s : intentInfo.dataList) {
                 String scheme = TextUtils.isEmpty(s.scheme) ? "file" : s.scheme;
                 String host = TextUtils.isEmpty(s.host) ? "" : s.host;
                 String port = TextUtils.isEmpty(s.port) ? "" : ":" + s.port;
@@ -241,6 +241,7 @@ public class DetailActivity extends BaseActivity {
         @BindView(R.id.layout_category) CheckBoxLayout layoutCategory;
         @BindView(R.id.layout_mimeType) CheckBoxLayout layoutMimeType;
         @BindView(R.id.layout_data) CheckBoxLayout layoutData;
+        @BindView(R.id.layout_extra) CheckBoxLayout layoutExtra;
         @BindView(R.id.cb_component) CheckBox cbComponent;
         @BindView(R.id.btn_shortcut) ImageView btnShortcut;
         @BindView(R.id.btn_preview) ImageView btnPreview;
@@ -251,13 +252,14 @@ public class DetailActivity extends BaseActivity {
             ButterKnife.bind(this, itemView);
         }
 
+        @OnClick(R.id.tv_extra)
+        public void addExtra() {
+            layoutExtra.addCheckEditor("");
+        }
+
         @OnClick(R.id.btn_shortcut)
         public void addShortcut() {
             final Context context = itemView.getContext();
-
-            IntentInfo intentInfo = data.get(getAdapterPosition());
-            final Intent intent = getIntent(intentInfo);
-
             final String shortcutName = apkInfo.loadLabel(getPackageManager()).toString();
             final Bitmap shortcutIcon = FileUtils.mergeBitmap(drawableToBitmap(apkInfo.loadIcon(getPackageManager())), drawableToBitmap(getResources().getDrawable(R.mipmap.ic_launcher)));
 
@@ -274,17 +276,41 @@ public class DetailActivity extends BaseActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             String name = tvName.getText().toString();
                             Bitmap icon = FileUtils.drawableToBitmap(ivIcon.getDrawable());
-                            ShortcutUtils.installShortcut(context, name, icon, intent);
+                            ShortcutUtils.installShortcut(context, name, icon, getIntent(getIntentInfoByChecked()));
                         }
                     })
                     .setNegativeButton(R.string.cancel, null)
                     .show();
         }
 
+        private IntentInfo getIntentInfoByChecked(){
+            IntentInfo intentInfo = new IntentInfo();
+            if (cbComponent.isChecked()) {
+                intentInfo.packageName = apkInfo.packageName;
+                intentInfo.className = tvActivityName.getText().toString();
+            }
+            for (String s : layoutAction.getSelectedString()) {
+                intentInfo.action = s;
+            }
+            intentInfo.categoryList = layoutCategory.getSelectedString();
+
+            List<String> dataList = layoutData.getSelectedString();
+            List<String> mimeTypeList = layoutMimeType.getSelectedString();
+            if (dataList.size() > 0) {
+                intentInfo.data = dataList.get(0);
+            }
+            if (mimeTypeList.size() > 0) {
+                intentInfo.mimeType = mimeTypeList.get(0);
+            }
+
+            layoutExtra.getSelectedString();
+            Bundle bundle = new Bundle();
+            return  intentInfo;
+        }
+
         @OnClick(R.id.btn_preview)
         public void previewIntent() {
-            IntentInfo intentInfo = data.get(getAdapterPosition());
-            Intent intent = getIntent(intentInfo);
+            Intent intent = getIntent(getIntentInfoByChecked());
             if (intent.resolveActivity(getPackageManager()) != null) {
                 try {
                     itemView.getContext().startActivity(intent);

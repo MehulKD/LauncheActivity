@@ -10,9 +10,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
+        android:gravity="top"
         android:orientation="horizontal">
 
         <CheckBox
@@ -23,8 +24,9 @@
         <TextView
             android:id="@+id/tv_activity_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
+            android:gravity="top"
             android:textColor="#000"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -36,7 +38,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
         android:text="Action"
         android:textSize="12sp"/>
 
@@ -45,7 +46,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
-        android:layout_marginRight="16dp"/>
+        android:layout_marginRight="16dp"
+        app:singleChoice="true"/>
 
     <TextView
         android:layout_width="60dp"
@@ -95,11 +97,12 @@
         app:singleChoice="true"/>
 
     <TextView
-        android:layout_width="60dp"
+        android:id="@+id/tv_extra"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:text="Extra"
+        android:text="Extra (click)"
         android:textSize="12sp"/>
 
     <xyz.hanks.launchactivity.CheckBoxLayout
@@ -123,7 +126,7 @@
             android:layout_height="48dp"
             android:layout_margin="4dp"
             android:padding="12dp"
-            android:src="@drawable/ic_share_black_24dp"/>
+            android:src="@drawable/ic_reply_black_24dp"/>
 
         <ImageView
             android:id="@+id/btn_shortcut"
@@ -131,7 +134,7 @@
             android:layout_height="48dp"
             android:layout_margin="4dp"
             android:padding="12dp"
-            android:src="@drawable/ic_add_box_black_24dp">
+            android:src="@drawable/ic_add_to_queue_black_24dp">
         </ImageView>
 
         <ImageView

@@ -11,6 +11,9 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 带有 EditText 的 checkbox
  * Created by hanks on 2016/12/9.
@@ -80,6 +83,17 @@ public class CheckBoxLayout extends LinearLayout {
 
     private void init() {
 
+    }
+
+    public List<String> getSelectedString(){
+        List<String> stringList = new ArrayList<>();
+        for (int i = 0; i < getChildCount(); i++) {
+            View view = getChildAt(i);
+            if (((CheckBox)view.findViewById(R.id.checkBox)).isChecked()) {
+                stringList.add(((EditText)view.findViewById(R.id.editText)).getText().toString());
+            }
+        }
+        return stringList;
     }
 
     private View newItemView() {
